@@ -2,11 +2,11 @@ data "terraform_remote_state" "vpcglobal" {
   backend = "gcs"
   config = {
     bucket = "terraform-project-team3"
-    prefix = "terraform/state/vpcglobal"
+    prefix = "terraform/state/globalvpc"
   }
 }
 output "vpcglobal" {
-  value = data.terraform_remote_state.vpcglobal.outputs.vpcglobal
+  value = data.terraform_remote_state.vpcglobal.outputs.vpc_name
 }
 output "project_id" {
   value = data.terraform_remote_state.vpcglobal.outputs.project_id
@@ -47,7 +47,7 @@ resource "google_sql_database" "database" {
 
 resource "google_compute_firewall" "allow-sql" {
   name    = "dbfirewall"
-  network = data.terraform_remote_state.vpcglobal.outputs.vpcglobal
+  network = data.terraform_remote_state.vpcglobal.outputs.vpc_name
   allow {
     protocol = "tcp"
     ports    = ["3306"]

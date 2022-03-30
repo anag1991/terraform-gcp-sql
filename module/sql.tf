@@ -14,7 +14,7 @@ module "sql" {
   user_host           = "admin.com"
   user_password       = "changeme"
   deletion_protection = false
-  allowed_hosts       = ["34.134.197.21"]
+  allowed_hosts       = ["34.132.161.247"]
 }
 
 
