@@ -1,57 +1,79 @@
-data "terraform_remote_state" "vpcglobal" {
-  backend = "gcs"
-  config = {
-    bucket = "terraform-project-team3"
-    prefix = "terraform/state/vpcglobal"
-  }
-}
-output "vpcglobal" {
-  value = data.terraform_remote_state.vpcglobal.outputs.vpcglobal
-}
-output "project_id" {
-  value = data.terraform_remote_state.vpcglobal.outputs.project_id
+variable "name" {
+  description = "The name of the Cloud SQL resources"
+  type        = string
 }
 
-data "terraform_remote_state" "asg" {
-  backend = "gcs"
-  config = {
-    bucket = "terraform-project-team3"
-    prefix = "terraform/state/asg"
-  }
+#required
+variable "database_version" {
+  description = "The database version to use"
+  type        = string
 }
 
-resource "google_sql_database_instance" "db" {
-  project             = data.terraform_remote_state.vpcglobal.outputs.project_id
-  name                = var.name
-  database_version    = var.database_version
-  region              = var.region
-  deletion_protection = var.deletion_protection
-
- settings {
-    tier              = var.tier
-    activation_policy = var.activation_policy
-  }
+#required
+variable "region" {
+  description = "The region of the Cloud SQL resources"
+  type        = string
 }
 
-resource "google_sql_user" "users" {
-  name     = var.user_name
-  instance = google_sql_database_instance.db.name
-  host     = var.user_host
-  password = var.user_password
+#Master
+variable "tier" {
+  description = "The tier for the master instance."
+  type        = string
+  default     = "db-n1-standard-1"
 }
 
-resource "google_sql_database" "database" {
-  name     = var.db_name
-  instance = google_sql_database_instance.db.name
+variable "zone" {
+  description = "The zone for the master instance, it should be something like: `us-central1-a`, `us-east1-c`."
+  type        = string
 }
 
-resource "google_compute_firewall" "allow-sql" {
-  name    = "dbfirewall"
-  network = data.terraform_remote_state.vpcglobal.outputs.vpcglobal
-  allow {
-    protocol = "tcp"
-    ports    = ["3306"]
-  }
-  source_ranges = var.allowed_hosts
+variable "activation_policy" {
+  description = "The activation policy for the master instance. Can be either `ALWAYS`, `NEVER` or `ON_DEMAND`."
+  type        = string
 }
 
+variable "availability_type" {
+  description = "The availability type for the master instance. Can be either `REGIONAL` or `null`."
+  type        = string
+  default     = "REGIONAL"
+}
+
+variable "disk_size" {
+  description = "The disk size for the master instance"
+  type        = number
+}
+
+variable "disk_type" {
+  description = "The disk type for the master instance."
+  type        = string
+}
+
+variable "db_name" {
+  description = "The name of the default database to create"
+  type        = string
+}
+
+variable "user_name" {
+  description = "The name of the default user"
+  type        = string
+}
+
+variable "user_host" {
+  description = "The host for the default user"
+  type        = string
+}
+
+variable "user_password" {
+  description = "The password for the default user. If not set, a random one will be generated and available in the generated_user_password output variable."
+  type        = string
+}
+
+variable "deletion_protection" {
+  description = "Used to block Terraform from deleting a SQL Instance."
+  type        = bool
+}
+
+variable "allowed_hosts" {
+  description = "Ip address allowed to connect to DB"
+  type        = list
+}
