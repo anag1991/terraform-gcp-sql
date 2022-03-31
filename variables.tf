@@ -77,3 +77,8 @@ variable "allowed_hosts" {
   description = "Ip address allowed to connect to DB"
   type        = list
 }
+
+variable "root_password" {
+  description = "root_password to connect to DB"
+  type        = string
+}

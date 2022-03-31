@@ -20,12 +20,13 @@ data "terraform_remote_state" "asg" {
   }
 }
 
-resource "google_sql_database_instance" "cloudsql" {
+resource "google_sql_database_instance" "mysql" {
   project             = data.terraform_remote_state.vpcglobal.outputs.project_id
   name                = var.name
   database_version    = var.database_version
   region              = var.region
   deletion_protection = var.deletion_protection
+  root_password       = var.root_password
 
  settings {
     tier              = var.tier
@@ -33,16 +34,16 @@ resource "google_sql_database_instance" "cloudsql" {
   }
 }
 
-resource "google_sql_user" "dbusers" {
+resource "google_sql_user" "admin" {
   name     = var.user_name
-  instance = google_sql_database_instance.cloudsql.name
+  instance = google_sql_database_instance.mysql.name
   host     = var.user_host
   password = var.user_password
 }
 
 resource "google_sql_database" "cloud-sql" {
   name     = var.db_name
-  instance = google_sql_database_instance.cloudsql.name
+  instance = google_sql_database_instance.mysql.name
 }
 
 resource "google_compute_firewall" "allow-mysql" {
