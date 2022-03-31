@@ -73,14 +73,15 @@ resource "google_compute_firewall" "allow-sql" {
   source_tags = [var.vm_config["network_tags"]]
 }
 ```
-### Login to SQL
-* You can connect to your db instance from Cloud Shell by using the following command: `gcloud sql connect projectx --user=admin --quiet`  and the default password set = `changeme`
-* You can also configure a `private IP` to use with your own VPC
+
+![image](https://user-images.githubusercontent.com/96315598/160964646-7bd32719-3d38-4787-85c1-6f6b313dd28b.png)
+
 
 ## Examples
-![db example](https://files.slack.com/files-pri/T036RBNDWKH-F03900LN6TZ/image.png)
+![image](https://user-images.githubusercontent.com/96315598/160963805-66cb237a-97f7-44ef-886b-6165b3587d9e.png)
+![image](https://user-images.githubusercontent.com/96315598/160963824-d4d730aa-bc28-4b65-8c20-172eca8eaf63.png)
 
-![firewall example](https://files.slack.com/files-pri/T036RBNDWKH-F0397U682FQ/image.png)
+
 
 ## Inputs
 | Name | Description | Type | Required | Default |
@@ -115,4 +116,3 @@ resource "google_compute_firewall" "allow-sql" {
 ## Resources
 * https://registry.terraform.io/providers/hashicorp/google/latest/docs
 * https://cloud.google.com/sql/docs
-
